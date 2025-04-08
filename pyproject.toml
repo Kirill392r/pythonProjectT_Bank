@@ -8,6 +8,13 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "requests (>=2.32.3,<3.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+    "freezegun (>=1.5.1,<2.0.0)",
+    "pytest (>=8.3.5,<9.0.0)",
+    "pytest-mock (>=3.14.0,<4.0.0)"
 ]
 
 
@@ -17,11 +24,37 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
+pytest-cov = "^6.0.0"
 
 
-[tool.poetry.group.lint.dependencies]
-flake8 = "^7.1.2"
-black = "^25.1.0"
-isort = "^6.0.1"
-mypy = "^1.15.0"
+[tool.mypy]
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_return_any = true
+exclude = 'venv'
 
+[tool.black]
+line-length = 119
+exclude = '''
+(
+  /(
+      \.eggs         # Исключить несколько общих каталогов
+    | \.git          # в корне проекта
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | dist
+  )/
+  | foo.py           # Также отдельно исключить файл с именем foo.py
+                     # в корне проекта
+)
+'''
+
+[tool.isort]
+line_length = 119
+
+[tool.coverage.report]
+exclude_also = [
+    'if __name__ == .__main__.:',
+]
