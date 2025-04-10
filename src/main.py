@@ -11,8 +11,8 @@ from src.views import base_func_module_one
 
 load_dotenv()
 
-EXCHANGE_RATES_API_KEY = os.getenv('EXCHANGE_RATES_API_KEY')
-ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY')
+EXCHANGE_RATES_API_KEY = os.getenv("EXCHANGE_RATES_API_KEY")
+ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 
 
 def main() -> None:

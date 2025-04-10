@@ -5,11 +5,11 @@ from datetime import datetime
 
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-FILE_PATH = os.path.join(os.path.dirname(__file__), '../data/operations.xlsx')
+FILE_PATH = os.path.join(os.path.dirname(__file__), "../data/operations.xlsx")
 
-EXCLUDED_CATEGORIES = ['Зарплата', 'Переводы', 'Пополнения']
+EXCLUDED_CATEGORIES = ["Зарплата", "Переводы", "Пополнения"]
 
 
 def analyze_cashback_categories() -> str:
@@ -30,7 +30,7 @@ def analyze_cashback_categories() -> str:
         logging.error(f"Ошибка при чтении файла Excel: {str(e)}")
         return json.dumps({"error": str(e)}, ensure_ascii=False)  # Убедитесь, что здесь установлен ensure_ascii=False
 
-    data['Дата операции'] = pd.to_datetime(data['Дата операции'], format='%d.%m.%Y %H:%M:%S')
+    data["Дата операции"] = pd.to_datetime(data["Дата операции"], format="%d.%m.%Y %H:%M:%S")
 
     start_date = datetime(year, month, 1)
 
@@ -39,15 +39,15 @@ def analyze_cashback_categories() -> str:
     else:
         end_date = datetime(year, month + 1, 1)
 
-    filtered_data = data[(data['Дата операции'] >= start_date) & (data['Дата операции'] < end_date)]
+    filtered_data = data[(data["Дата операции"] >= start_date) & (data["Дата операции"] < end_date)]
 
     logging.info(f"Количество транзакций за указанный период: {len(filtered_data)}")
 
-    filtered_data = filtered_data[~filtered_data['Категория'].isin(EXCLUDED_CATEGORIES)]
+    filtered_data = filtered_data[~filtered_data["Категория"].isin(EXCLUDED_CATEGORIES)]
 
     logging.info(f"Исключены категории: {EXCLUDED_CATEGORIES}. Осталось транзакций: {len(filtered_data)}")
 
-    cashback_summary = filtered_data.groupby('Категория')['Сумма операции'].sum().abs() / 100
+    cashback_summary = filtered_data.groupby("Категория")["Сумма операции"].sum().abs() / 100
 
     top_categories = cashback_summary.nlargest(3).to_dict()
 
@@ -58,8 +58,7 @@ def analyze_cashback_categories() -> str:
     return result_json
 
 
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def search_transactions(query: str, transactions: list[dict] | None = None) -> str:
@@ -79,14 +78,14 @@ def search_transactions(query: str, transactions: list[dict] | None = None) -> s
         data = pd.DataFrame(transactions)
 
     # Фильтрация данных по запросу
-    filtered_data = data[data['Описание'].str.contains(query, case=False, na=False) |
-                         data['Категория'].str.contains(query, case=False, na=False)]
+    filtered_data = data[
+        data["Описание"].str.contains(query, case=False, na=False)
+        | data["Категория"].str.contains(query, case=False, na=False)
+    ]
 
     if not filtered_data.empty:
         logging.info(f"Найдено {len(filtered_data)} транзакций по запросу '{query}'.")
-        result_json = {
-            "transactions": json.loads(filtered_data.to_json(orient='records', force_ascii=False))
-        }
+        result_json = {"transactions": json.loads(filtered_data.to_json(orient="records", force_ascii=False))}
         return json.dumps(result_json, ensure_ascii=False)
     else:
         logging.info(f"По запросу '{query}' ничего не найдено.")
